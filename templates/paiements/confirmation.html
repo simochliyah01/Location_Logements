@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}Paiement Confirmé{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+
+        <!-- Succès header -->
+        <div class="text-center mb-4">
+            <div style="width:80px;height:80px;border-radius:50%;background:rgba(16,185,129,0.15);border:2px solid rgba(16,185,129,0.4);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;animation:pulse 2s infinite;">
+                <i class="fas fa-check-circle fa-2x" style="color:var(--success)"></i>
+            </div>
+            <h2 style="font-weight:800;font-size:1.8rem;margin-bottom:8px;">Paiement réussi !</h2>
+            <p style="color:var(--text2);">Votre réservation est confirmée et votre reçu est prêt</p>
+        </div>
+
+        <!-- Référence -->
+        <div class="card p-0 overflow-hidden mb-4">
+            <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));padding:16px 24px;">
+                <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;opacity:0.8;margin-bottom:4px;">Référence de paiement</div>
+                <div style="font-size:1.3rem;font-weight:900;letter-spacing:2px;font-family:monospace;">{{ paiement.reference }}</div>
+            </div>
+
+            <!-- Détails -->
+            <div class="p-4">
+                <div class="row g-3 mb-3">
+                    <div class="col-6">
+                        <div style="background:var(--bg2);border-radius:12px;padding:14px;">
+                            <div style="color:var(--text2);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">Logement</div>
+                            <div style="font-weight:700;font-size:0.9rem;">{{ paiement.reservation.logement.titre }}</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div style="background:var(--bg2);border-radius:12px;padding:14px;">
+                            <div style="color:var(--text2);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">Ville</div>
+                            <div style="font-weight:700;font-size:0.9rem;">{{ paiement.reservation.logement.ville }}</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div style="background:var(--bg2);border-radius:12px;padding:14px;">
+                            <div style="color:var(--text2);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">Arrivée</div>
+                            <div style="font-weight:700;font-size:0.9rem;">{{ paiement.reservation.date_arrivee }}</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div style="background:var(--bg2);border-radius:12px;padding:14px;">
+                            <div style="color:var(--text2);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">Départ</div>
+                            <div style="font-weight:700;font-size:0.9rem;">{{ paiement.reservation.date_depart }}</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div style="background:var(--bg2);border-radius:12px;padding:14px;">
+                            <div style="color:var(--text2);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">Durée</div>
+                            <div style="font-weight:700;font-size:0.9rem;">{{ paiement.reservation.nombre_nuits }} nuit(s)</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div style="background:var(--bg2);border-radius:12px;padding:14px;">
+                            <div style="color:var(--text2);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">Méthode</div>
+                            <div style="font-weight:700;font-size:0.9rem;">
+                                <i class="fas fa-credit-card me-1" style="color:var(--accent)"></i>
+                                {{ paiement.methode|capfirst }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total -->
+                <div style="background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(16,185,129,0.05));border:1px solid rgba(16,185,129,0.3);border-radius:14px;padding:18px;display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <div style="color:var(--text2);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Total payé</div>
+                        <div style="font-size:0.82rem;color:var(--text2);">{{ paiement.date_paiement|date:"d M Y à H:i" }}</div>
+                    </div>
+                    <div style="font-size:1.6rem;font-weight:900;color:var(--success);">{{ paiement.montant }} DH</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info PDF -->
+        <div style="background:rgba(124,111,247,0.08);border:1px solid rgba(124,111,247,0.2);border-radius:14px;padding:16px;margin-bottom:24px;display:flex;align-items:center;gap:14px;">
+            <div style="width:42px;height:42px;border-radius:12px;background:rgba(124,111,247,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="fas fa-file-pdf" style="color:var(--accent);font-size:1.1rem;"></i>
+            </div>
+            <div>
+                <div style="font-weight:700;font-size:0.9rem;margin-bottom:2px;">Votre reçu est prêt</div>
+                <div style="color:var(--text2);font-size:0.82rem;">Une copie a également été envoyée au propriétaire</div>
+            </div>
+        </div>
+
+        <!-- Boutons -->
+        <div class="d-flex gap-3">
+            <a href="{% url 'mes_reservations' %}" class="btn btn-outline-secondary flex-fill" style="padding:13px;">
+                <i class="fas fa-calendar me-2"></i>Mes réservations
+            </a>
+            <a href="{% url 'telecharger_recu' paiement.pk %}" class="btn btn-success flex-fill" style="padding:13px;font-size:1rem;">
+                <i class="fas fa-download me-2"></i>Télécharger le reçu PDF
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+    70% { box-shadow: 0 0 0 14px rgba(0,0,0,0); }
+    100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+}
+</style>
+{% endblock %}

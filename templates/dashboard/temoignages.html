@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% block title %}Gestion Avis Clients{% endblock %}
+{% block content %}
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-5">
+    <div>
+        <h2 class="page-title"><i class="fas fa-star me-2" style="color:#f59e0b"></i>Avis Clients</h2>
+        <p class="page-subtitle">Validez ou rejetez les témoignages soumis</p>
+    </div>
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Dashboard
+    </a>
+</div>
+
+<!-- Stats -->
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="card p-4">
+            <div class="d-flex align-items-center gap-3">
+                <div style="width:48px;height:48px;border-radius:14px;background:rgba(245,158,11,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-star" style="color:#f59e0b;font-size:1.1rem;"></i>
+                </div>
+                <div>
+                    <div style="color:var(--text2);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Total avis</div>
+                    <div style="font-size:1.6rem;font-weight:900;">{{ temoignages|length }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-4">
+            <div class="d-flex align-items-center gap-3">
+                <div style="width:48px;height:48px;border-radius:14px;background:rgba(16,185,129,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-check-circle" style="color:var(--success);font-size:1.1rem;"></i>
+                </div>
+                <div>
+                    <div style="color:var(--text2);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Publiés</div>
+                    <div style="font-size:1.6rem;font-weight:900;color:var(--success);">{{ temoignages|length }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-4">
+            <div class="d-flex align-items-center gap-3">
+                <div style="width:48px;height:48px;border-radius:14px;background:rgba(245,158,11,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-clock" style="color:var(--warning);font-size:1.1rem;"></i>
+                </div>
+                <div>
+                    <div style="color:var(--text2);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">En attente</div>
+                    <div style="font-size:1.6rem;font-weight:900;color:var(--warning);">
+                        {% with pending=0 %}{{ temoignages|length }}{% endwith %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Liste avis -->
+{% if temoignages %}
+<div class="row g-4">
+    {% for t in temoignages %}
+    <div class="col-md-6">
+        <div class="card p-0 overflow-hidden"
+            style="border-color:{% if t.approuve %}rgba(16,185,129,0.25){% else %}rgba(245,158,11,0.25){% endif %};">
+
+            <!-- Bande colorée en haut -->
+            <div style="height:4px;background:{% if t.approuve %}linear-gradient(90deg,var(--success),#34d399){% else %}linear-gradient(90deg,var(--warning),#fbbf24){% endif %};"></div>
+
+            <div class="p-4">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="width:46px;height:46px;border-radius:50%;overflow:hidden;flex-shrink:0;">
+                            {% if t.auteur.avatar %}
+                            <img src="{{ t.auteur.avatar.url }}" style="width:100%;height:100%;object-fit:cover;">
+                            {% else %}
+                            <div style="width:100%;height:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;">
+                                {{ t.auteur.username|first|upper }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div style="font-weight:700;font-size:0.95rem;">{{ t.auteur.get_full_name|default:t.auteur.username }}</div>
+                            <div style="color:var(--text2);font-size:0.78rem;margin-top:1px;">
+                                <i class="fas fa-clock me-1"></i>{{ t.date_creation|date:"d M Y" }}
+                            </div>
+                        </div>
+                    </div>
+                    {% if t.approuve %}
+                    <span style="background:rgba(16,185,129,0.12);color:var(--success);border:1px solid rgba(16,185,129,0.3);padding:5px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;">
+                        <i class="fas fa-check-circle me-1"></i>Publié
+                    </span>
+                    {% else %}
+                    <span style="background:rgba(245,158,11,0.12);color:var(--warning);border:1px solid rgba(245,158,11,0.3);padding:5px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;">
+                        <i class="fas fa-clock me-1"></i>En attente
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- Étoiles -->
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+                    <div style="display:flex;gap:3px;">
+                        {% for i in "12345" %}
+                        {% if forloop.counter <= t.note %}
+                        <i class="fas fa-star" style="color:#f59e0b;font-size:0.9rem;"></i>
+                        {% else %}
+                        <i class="far fa-star" style="color:var(--border2);font-size:0.9rem;"></i>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <span style="font-weight:800;color:#f59e0b;font-size:0.88rem;">{{ t.note }}/5</span>
+                </div>
+
+                <!-- Commentaire -->
+                <div style="background:var(--bg2);border-radius:12px;padding:14px;margin-bottom:18px;border-left:3px solid {% if t.approuve %}var(--success){% else %}var(--warning){% endif %};">
+                    <p style="color:var(--text2);font-size:0.88rem;line-height:1.7;margin:0;font-style:italic;">
+                        "{{ t.contenu }}"
+                    </p>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex gap-2">
+                    {% if not t.approuve %}
+                    <a href="{% url 'dashboard_approuver_temoignage' t.pk %}" class="btn btn-success btn-sm flex-fill" style="padding:10px;">
+                        <i class="fas fa-check me-1"></i>Approuver
+                    </a>
+                    {% endif %}
+                    <button type="button"
+                        class="btn btn-sm flex-fill"
+                        style="padding:10px;background:rgba(239,68,68,0.1);color:var(--danger);border:1px solid rgba(239,68,68,0.3);font-weight:600;"
+                        onclick="ouvrirConfirm('{% url 'dashboard_rejeter_temoignage' t.pk %}')">
+                        <i class="fas fa-trash me-1"></i>Rejeter
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<!-- Empty state -->
+<div class="text-center" style="padding:80px 20px;">
+    <div style="width:90px;height:90px;border-radius:24px;background:var(--bg2);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+        <i class="fas fa-star fa-2x" style="color:var(--text2);opacity:0.4;"></i>
+    </div>
+    <h4 style="font-weight:700;margin-bottom:8px;">Aucun avis pour le moment</h4>
+    <p style="color:var(--text2);">Les témoignages soumis apparaîtront ici</p>
+</div>
+{% endif %}
+
+<!-- Modal confirmation -->
+<div id="modalRejeter" style="display:none;position:fixed;inset:0;z-index:99999;align-items:center;justify-content:center;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);">
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:24px;padding:36px;max-width:400px;width:90%;box-shadow:0 32px 80px rgba(0,0,0,0.6);">
+        <div style="width:56px;height:56px;border-radius:16px;background:rgba(239,68,68,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+            <i class="fas fa-exclamation-triangle" style="color:var(--danger);font-size:1.3rem;"></i>
+        </div>
+        <h5 style="font-weight:800;text-align:center;margin-bottom:10px;">Rejeter cet avis ?</h5>
+        <p style="color:var(--text2);font-size:0.88rem;text-align:center;margin-bottom:28px;line-height:1.6;">Ce témoignage sera supprimé définitivement et retiré de la plateforme.</p>
+        <div style="display:flex;gap:10px;">
+            <button onclick="fermerConfirm()"
+                style="flex:1;padding:13px;background:var(--bg2);border:1px solid var(--border2);color:var(--text2);border-radius:12px;font-size:0.9rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s;"
+                onmouseover="this.style.borderColor='var(--accent)';this.style.color='white'"
+                onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text2)'">
+                Annuler
+            </button>
+            <button id="btnConfirmRejeter"
+                style="flex:1;padding:13px;background:var(--danger);border:none;color:white;border-radius:12px;font-size:0.9rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s;"
+                onmouseover="this.style.opacity='0.85'"
+                onmouseout="this.style.opacity='1'">
+                <i class="fas fa-trash me-1"></i>Supprimer
+            </button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let urlARejeter = '';
+
+function ouvrirConfirm(url) {
+    urlARejeter = url;
+    const modal = document.getElementById('modalRejeter');
+    modal.style.display = 'flex';
+    document.getElementById('btnConfirmRejeter').onclick = function() {
+        window.location.href = urlARejeter;
+    };
+}
+
+function fermerConfirm() {
+    document.getElementById('modalRejeter').style.display = 'none';
+}
+
+document.getElementById('modalRejeter').addEventListener('click', function(e) {
+    if (e.target === this) fermerConfirm();
+});
+</script>
+{% endblock %}

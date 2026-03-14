@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Détail Réservation{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card p-4">
+            <h3 class="mb-4"><i class="fas fa-calendar-check text-primary"></i> Détail de la réservation</h3>
+            <p><strong>Logement :</strong> {{ reservation.logement.titre }}</p>
+            <p><strong>Ville :</strong> {{ reservation.logement.ville }}</p>
+            <p><strong>Locataire :</strong> {{ reservation.locataire.get_full_name|default:reservation.locataire.username }}</p>
+            <p><strong>Arrivée :</strong> {{ reservation.date_arrivee }}</p>
+            <p><strong>Départ :</strong> {{ reservation.date_depart }}</p>
+            <p><strong>Durée :</strong> {{ reservation.nombre_nuits }} nuit(s)</p>
+            <p><strong>Prix total :</strong> <span class="text-primary fw-bold">{{ reservation.prix_total }} MAD</span></p>
+            <p><strong>Statut :</strong>
+                <span class="badge 
+                    {% if reservation.statut == 'confirmee' %}bg-success
+                    {% elif reservation.statut == 'en_attente' %}bg-warning text-dark
+                    {% elif reservation.statut == 'annulee' %}bg-danger
+                    {% else %}bg-secondary{% endif %}">
+                    {{ reservation.get_statut_display }}
+                </span>
+            </p>
+            <a href="{% url 'mes_reservations' %}" class="btn btn-outline-secondary mt-3">Retour</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block title %}{{ notif.titre }}{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center" style="min-height:75vh;align-items:center;">
+    <div class="col-md-7 col-lg-6">
+        <div class="card p-0 overflow-hidden">
+
+            <!-- Header coloré -->
+            <div style="padding:36px;text-align:center;
+                {% if notif.type_notif == 'reservation_confirmee' %}
+                background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(16,185,129,0.05));
+                border-bottom:1px solid rgba(16,185,129,0.2);
+                {% else %}
+                background:linear-gradient(135deg,rgba(239,68,68,0.15),rgba(239,68,68,0.05));
+                border-bottom:1px solid rgba(239,68,68,0.2);
+                {% endif %}">
+                <div style="width:72px;height:72px;border-radius:50%;
+                    {% if notif.type_notif == 'reservation_confirmee' %}
+                    background:rgba(16,185,129,0.2);border:2px solid rgba(16,185,129,0.4);
+                    {% else %}
+                    background:rgba(239,68,68,0.2);border:2px solid rgba(239,68,68,0.4);
+                    {% endif %}
+                    display:flex;align-items:center;justify-content:center;margin:0 auto 18px;">
+                    {% if notif.type_notif == 'reservation_confirmee' %}
+                    <i class="fas fa-check-circle fa-2x" style="color:var(--success)"></i>
+                    {% else %}
+                    <i class="fas fa-times-circle fa-2x" style="color:var(--danger)"></i>
+                    {% endif %}
+                </div>
+                <h3 style="font-weight:800;font-size:1.3rem;margin-bottom:6px;">
+                    {% if notif.type_notif == 'reservation_confirmee' %}
+                    Réservation confirmée !
+                    {% else %}
+                    Réservation non disponible
+                    {% endif %}
+                </h3>
+                <p style="color:var(--text2);font-size:0.85rem;margin:0;">{{ notif.date|date:"d F Y à H:i" }}</p>
+            </div>
+
+            <!-- Corps du message -->
+            <div style="padding:28px;">
+
+                {% if notif.type_notif == 'reservation_confirmee' and reservation %}
+                <!-- Infos réservation -->
+                <div style="background:var(--bg2);border-radius:14px;padding:20px;margin-bottom:20px;">
+                    <div style="font-weight:700;font-size:0.88rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:14px;">
+                        Détails de votre réservation
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span style="color:var(--text2);font-size:0.88rem;">Logement</span>
+                        <span style="font-weight:700;font-size:0.88rem;">{{ reservation.logement.titre }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span style="color:var(--text2);font-size:0.88rem;">Ville</span>
+                        <span style="font-weight:700;font-size:0.88rem;">{{ reservation.logement.ville }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span style="color:var(--text2);font-size:0.88rem;">Arrivée</span>
+                        <span style="font-weight:700;font-size:0.88rem;">{{ reservation.date_arrivee }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span style="color:var(--text2);font-size:0.88rem;">Départ</span>
+                        <span style="font-weight:700;font-size:0.88rem;">{{ reservation.date_depart }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between" style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;">
+                        <span style="font-weight:700;">Total</span>
+                        <span style="font-weight:800;font-size:1.1rem;color:var(--accent);">{{ reservation.prix_total }} DH</span>
+                    </div>
+                </div>
+
+                <!-- Coordonnées propriétaire -->
+                <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:14px;padding:20px;margin-bottom:24px;">
+                    <div style="font-weight:700;font-size:0.88rem;color:var(--success);margin-bottom:14px;">
+                        <i class="fas fa-user-tie me-2"></i>Coordonnées du propriétaire
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mb-2" style="font-size:0.88rem;">
+                        <i class="fas fa-user" style="color:var(--text2);width:16px;"></i>
+                        <span>{{ reservation.logement.proprietaire.get_full_name|default:reservation.logement.proprietaire.username }}</span>
+                    </div>
+                    {% if reservation.logement.proprietaire.telephone %}
+                    <div class="d-flex align-items-center gap-2 mb-2" style="font-size:0.88rem;">
+                        <i class="fab fa-whatsapp" style="color:var(--success);width:16px;"></i>
+                        <a href="https://wa.me/{{ reservation.logement.proprietaire.telephone }}"
+                            target="_blank"
+                            style="color:var(--success);font-weight:600;text-decoration:none;">
+                            {{ reservation.logement.proprietaire.telephone }}
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="d-flex align-items-center gap-2 mb-2" style="font-size:0.88rem;color:var(--text2);">
+                        <i class="fas fa-phone" style="width:16px;"></i>
+                        <span>Téléphone non renseigné</span>
+                    </div>
+                    {% endif %}
+                    <div class="d-flex align-items-center gap-2" style="font-size:0.88rem;">
+                        <i class="fas fa-map-marker-alt" style="color:var(--accent);width:16px;"></i>
+                        <span>{{ reservation.logement.adresse }}, {{ reservation.logement.ville }}</span>
+                    </div>
+                </div>
+
+                {% else %}
+                <!-- Message refus -->
+                <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:14px;padding:20px;margin-bottom:24px;">
+                    <p style="color:var(--text2);font-size:0.92rem;line-height:1.8;margin:0;">
+                        Nous sommes désolés, votre demande de réservation n'a pas pu être confirmée par le propriétaire.
+                        Nous vous invitons à explorer nos autres logements disponibles.
+                    </p>
+                </div>
+                {% endif %}
+
+                <!-- Boutons -->
+                <div class="d-flex gap-3">
+                    {% if notif.type_notif == 'reservation_confirmee' and reservation %}
+                    <a href="{% url 'reservation_detail' reservation.pk %}" class="btn btn-outline-secondary flex-fill" style="padding:12px;">
+                        <i class="fas fa-calendar me-2"></i>Voir détails
+                    </a>
+                    <a href="{% url 'paiement' reservation.pk %}" class="btn btn-primary flex-fill" style="padding:12px;">
+                        <i class="fas fa-credit-card me-2"></i>Passer au paiement
+                    </a>
+                    {% else %}
+                    <a href="{% url 'logements_search' %}" class="btn btn-primary flex-fill" style="padding:12px;">
+                        <i class="fas fa-search me-2"></i>Chercher un logement
+                    </a>
+                    <a href="{% url 'logements_list' %}" class="btn btn-outline-secondary flex-fill" style="padding:12px;">
+                        Accueil
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

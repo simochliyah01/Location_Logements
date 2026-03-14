@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% block title %}Inscription{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="card p-5">
+
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <div style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;margin:0 auto 18px;">
+                    <i class="fas fa-user-plus" style="font-size:1.4rem;color:white;"></i>
+                </div>
+                <h3 style="font-weight:800;font-size:1.5rem;margin-bottom:6px;">Créer un compte</h3>
+                <p style="color:var(--text2);font-size:0.9rem;">Rejoignez LocationMaroc dès aujourd'hui</p>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row g-3">
+
+                    <!-- Rôle EN PREMIER centré -->
+                    <div class="col-12">
+                        <label class="form-label text-center d-block">JE SUIS</label>
+                        <div class="row g-3 justify-content-center">
+                            <div class="col-4">
+    <label style="cursor:pointer;display:block;">
+        <input type="radio" name="role" value="locataire" style="display:none;" class="role-radio" checked>
+        <div class="text-center p-3" style="background:var(--bg2);border:2px solid var(--accent);border-radius:14px;transition:all 0.2s;" id="card-locataire">
+            <i class="fas fa-user fa-lg mb-1" style="color:var(--accent)"></i>
+            <div style="font-weight:700;font-size:0.88rem;">Locataire</div>
+            <div style="color:var(--text2);font-size:0.75rem;margin-top:2px;">Je cherche un logement</div>
+        </div>
+    </label>
+</div>
+<div class="col-4">
+    <label style="cursor:pointer;display:block;">
+        <input type="radio" name="role" value="proprietaire" style="display:none;" class="role-radio">
+        <div class="text-center p-3" style="background:var(--bg2);border:2px solid var(--border2);border-radius:14px;transition:all 0.2s;" id="card-proprietaire">
+            <i class="fas fa-home fa-lg mb-1" style="color:var(--text2)"></i>
+            <div style="font-weight:700;font-size:0.88rem;">Propriétaire</div>
+            <div style="color:var(--text2);font-size:0.75rem;margin-top:2px;">Je propose un logement</div>
+        </div>
+    </label>
+</div>
+                        </div>
+                    </div>
+
+                    <!-- Séparateur -->
+                    <div class="col-12">
+                        <hr style="border-color:var(--border);margin:8px 0;">
+                    </div>
+
+                    <!-- Nom d'utilisateur -->
+                    <div class="col-md-6">
+                        <label class="form-label">NOM D'UTILISATEUR</label>
+                        <div style="position:relative;">
+                            <i class="fas fa-at" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:0.85rem;"></i>
+                            <input type="text" name="username" value="{{ form.username.value|default:'' }}"
+                                class="form-control" placeholder="Ex: med123" required style="padding-left:42px;">
+                        </div>
+                        {% if form.username.errors %}<div style="color:var(--danger);font-size:0.8rem;margin-top:4px;">{{ form.username.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <!-- Prénom -->
+                    <div class="col-md-6">
+                        <label class="form-label">PRÉNOM</label>
+                        <div style="position:relative;">
+                            <i class="fas fa-user" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:0.85rem;"></i>
+                            <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}"
+                                class="form-control" placeholder="Ex: Mohamed" style="padding-left:42px;">
+                        </div>
+                    </div>
+
+                    <!-- Nom -->
+                    <div class="col-md-6">
+                        <label class="form-label">NOM</label>
+                        <div style="position:relative;">
+                            <i class="fas fa-user" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:0.85rem;"></i>
+                            <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}"
+                                class="form-control" placeholder="Ex: Benjelloun" style="padding-left:42px;">
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <label class="form-label">EMAIL</label>
+                        <div style="position:relative;">
+                            <i class="fas fa-envelope" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:0.85rem;"></i>
+                            <input type="email" name="email" value="{{ form.email.value|default:'' }}"
+                                class="form-control" placeholder="Med@example.com" style="padding-left:42px;">
+                        </div>
+                        {% if form.email.errors %}<div style="color:var(--danger);font-size:0.8rem;margin-top:4px;">{{ form.email.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <!-- Téléphone -->
+                    <div class="col-md-6">
+                        <label class="form-label">TÉLÉPHONE</label>
+                        <div style="position:relative;">
+                            <i class="fas fa-phone" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:0.85rem;"></i>
+                            <input type="text" name="telephone" value="{{ form.telephone.value|default:'' }}"
+                                class="form-control" placeholder="Ex: 06xxxxxxxx" style="padding-left:42px;">
+                        </div>
+                    </div>
+
+                    <!-- CIN -->
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            CIN <span style="color:var(--danger)">*</span>
+                            <span style="color:var(--text2);font-size:0.72rem;font-weight:400;margin-left:6px;text-transform:none;letter-spacing:0;">
+                                <i class="fas fa-shield-alt me-1" style="color:var(--accent)"></i>Requis pour la sécurité
+                            </span>
+                        </label>
+                        <div style="position:relative;">
+                            <i class="fas fa-id-card" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:0.85rem;"></i>
+                            <input type="text" name="cin" value="{{ form.cin.value|default:'' }}"
+                            class="form-control" placeholder="Ex: AB123456" required
+                            style="padding-left:42px;{% if form.cin.errors %}border-color:var(--danger);{% endif %}"
+                            maxlength="20">
+                        </div>
+                        {% if form.cin.errors %}<div style="color:var(--danger);font-size:0.8rem;margin-top:4px;">{{ form.cin.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <!-- Mot de passe -->
+                    <div class="col-md-6">
+                        <label class="form-label">MOT DE PASSE</label>
+                        <div style="position:relative;">
+                            <i class="fas fa-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:0.85rem;"></i>
+                            <input type="password" name="password1" id="password1"
+                                class="form-control" placeholder="••••••••" required style="padding-left:42px;padding-right:42px;">
+                            <i class="fas fa-eye" id="toggleP1" onclick="togglePass('password1','toggleP1')"
+                                style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text2);cursor:pointer;font-size:0.85rem;"></i>
+                        </div>
+                        {% if form.password1.errors %}<div style="color:var(--danger);font-size:0.8rem;margin-top:4px;">{{ form.password1.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <!-- Confirmation -->
+                    <div class="col-md-6">
+                        <label class="form-label">CONFIRMATION MOT DE PASSE</label>
+                        <div style="position:relative;">
+                            <i class="fas fa-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:0.85rem;"></i>
+                            <input type="password" name="password2" id="password2"
+                                class="form-control" placeholder="••••••••" required style="padding-left:42px;padding-right:42px;">
+                            <i class="fas fa-eye" id="toggleP2" onclick="togglePass('password2','toggleP2')"
+                                style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text2);cursor:pointer;font-size:0.85rem;"></i>
+                        </div>
+                        {% if form.password2.errors %}<div style="color:var(--danger);font-size:0.8rem;margin-top:4px;">{{ form.password2.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <!-- Erreurs globales -->
+                    {% if form.non_field_errors %}
+                    <div class="col-12">
+                        <div class="alert alert-danger">{{ form.non_field_errors.0 }}</div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Submit -->
+                    <div class="col-12 mt-2">
+                        <button type="submit" class="btn btn-primary w-100" style="padding:14px;font-size:1rem;">
+                            <i class="fas fa-user-plus me-2"></i>Créer mon compte
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="text-center mt-4" style="color:var(--text2);font-size:0.88rem;">
+                Déjà un compte ?
+                <a href="{% url 'login' %}" style="color:var(--accent);font-weight:600;text-decoration:none;">Se connecter</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePass(id, iconId) {
+    const input = document.getElementById(id);
+    const icon = document.getElementById(iconId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
+
+document.querySelectorAll('.role-radio').forEach(radio => {
+    radio.addEventListener('change', function() {
+        ['locataire', 'proprietaire'].forEach(r => {
+            const card = document.getElementById('card-' + r);
+            card.style.borderColor = 'var(--border2)';
+            card.querySelector('i').style.color = 'var(--text2)';
+        });
+        const card = document.getElementById('card-' + this.value);
+        card.style.borderColor = 'var(--accent)';
+        card.querySelector('i').style.color = 'var(--accent)';
+    });
+});
+</script>
+{% endblock %}

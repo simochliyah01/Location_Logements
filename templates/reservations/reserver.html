@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}Réserver — {{ logement.titre }}{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="card p-5">
+            <!-- Header -->
+            <div class="d-flex align-items-center gap-3 mb-2">
+                <div style="width:48px;height:48px;border-radius:14px;background:rgba(124,111,247,0.15);border:1px solid rgba(124,111,247,0.3);display:flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-calendar-check" style="color:var(--accent);font-size:1.2rem;"></i>
+                </div>
+                <h2 style="font-weight:800;font-size:1.8rem;margin:0;">Réserver</h2>
+            </div>
+            <p style="color:var(--text2);margin-bottom:28px;font-size:0.95rem;">
+                {{ logement.titre }} — {{ logement.ville }}
+            </p>
+
+            <!-- Price -->
+            <div style="margin-bottom:28px;">
+                <span style="font-size:1.6rem;font-weight:900;color:var(--accent);">{{ logement.prix_par_nuit }} DH</span>
+                <span style="color:var(--text2);font-size:0.9rem;"> / nuit</span>
+            </div>
+
+            <!-- Form -->
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="mb-4">
+                    <label class="form-label" style="color:white;font-size:0.8rem;font-weight:700;letter-spacing:0.8px;">
+                        DATE ARRIVÉE
+                    </label>
+                    <input type="date" name="date_arrivee"
+                        class="form-control"
+                        style="background:var(--bg2);border:1.5px solid var(--border2);color:white;border-radius:12px;padding:13px 16px;font-size:0.95rem;width:100%;"
+                        value="{{ form.date_arrivee.value|default:'' }}">
+                    {% for error in form.date_arrivee.errors %}
+                    <div style="color:var(--danger);font-size:0.82rem;margin-top:6px;"><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label" style="color:white;font-size:0.8rem;font-weight:700;letter-spacing:0.8px;">
+                        DATE DÉPART
+                    </label>
+                    <input type="date" name="date_depart"
+                        class="form-control"
+                        style="background:var(--bg2);border:1.5px solid var(--border2);color:white;border-radius:12px;padding:13px 16px;font-size:0.95rem;width:100%;"
+                        value="{{ form.date_depart.value|default:'' }}">
+                    {% for error in form.date_depart.errors %}
+                    <div style="color:var(--danger);font-size:0.82rem;margin-top:6px;"><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                {% for error in form.non_field_errors %}
+                <div class="alert alert-danger mb-4">
+                    <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
+                </div>
+                {% endfor %}
+
+                <!-- Summary dynamique -->
+                <div id="summary" style="display:none;background:rgba(124,111,247,0.08);border:1px solid rgba(124,111,247,0.2);border-radius:14px;padding:16px;margin-bottom:24px;">
+                    <div class="d-flex justify-content-between mb-2" style="font-size:0.88rem;">
+                        <span style="color:var(--text2);">Durée</span>
+                        <span style="color:white;font-weight:600;" id="nbNuits">—</span>
+                    </div>
+                    <div class="d-flex justify-content-between" style="font-size:0.95rem;">
+                        <span style="color:var(--text2);">Total estimé</span>
+                        <span style="color:var(--accent);font-weight:800;font-size:1.1rem;" id="totalEstime">—</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mb-3" style="padding:15px;font-size:1rem;border-radius:14px;">
+                    <i class="fas fa-check me-2"></i>Confirmer la réservation
+                </button>
+                <a href="{% url 'logement_detail' logement.pk %}" class="btn btn-outline-secondary w-100" style="padding:14px;border-radius:14px;">
+                    Annuler
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+const prixNuit = {{ logement.prix_par_nuit }};
+const arrivee = document.querySelector('input[name="date_arrivee"]');
+const depart = document.querySelector('input[name="date_depart"]');
+const summary = document.getElementById('summary');
+const nbNuits = document.getElementById('nbNuits');
+const totalEstime = document.getElementById('totalEstime');
+
+function updateSummary() {
+    if (arrivee.value && depart.value) {
+        const d1 = new Date(arrivee.value);
+        const d2 = new Date(depart.value);
+        const diff = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+        if (diff > 0) {
+            summary.style.display = 'block';
+            nbNuits.textContent = diff + ' nuit(s)';
+            totalEstime.textContent = (diff * prixNuit).toLocaleString() + ' DH';
+        } else {
+            summary.style.display = 'none';
+        }
+    }
+}
+arrivee.addEventListener('change', updateSummary);
+depart.addEventListener('change', updateSummary);
+</script>
+{% endblock %}

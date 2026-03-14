@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+{% block title %}Tableau de bord Admin{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-start mb-5">
+    <div>
+        <h2 class="page-title">Tableau de bord</h2>
+        <p class="page-subtitle">Aperçu de votre activité immobilière</p>
+    </div>
+    <a href="{% url 'logement_create' %}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Ajouter une propriété
+    </a>
+</div>
+
+{% if stats.reservations_en_attente > 0 %}
+<div class="alert alert-warning d-flex align-items-center gap-3 mb-4">
+    <div style="width:40px;height:40px;border-radius:12px;background:rgba(245,158,11,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fas fa-bell" style="color:var(--warning)"></i>
+    </div>
+    <div>
+        <strong>{{ stats.reservations_en_attente }} réservation(s) en attente</strong> de confirmation !
+        <a href="{% url 'dashboard_reservations' %}" style="color:var(--warning);font-weight:700;margin-left:8px;">Voir →</a>
+    </div>
+</div>
+{% endif %}
+
+{% if stats.temoignages_en_attente > 0 %}
+<div class="alert alert-info d-flex align-items-center gap-3 mb-4">
+    <div style="width:40px;height:40px;border-radius:12px;background:rgba(34,211,238,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fas fa-star" style="color:var(--accent2)"></i>
+    </div>
+    <div>
+        <strong>{{ stats.temoignages_en_attente }} avis client(s)</strong> en attente de validation !
+        <a href="{% url 'dashboard_temoignages' %}" style="color:var(--accent2);font-weight:700;margin-left:8px;">Valider →</a>
+    </div>
+</div>
+{% endif %}
+
+<!-- STAT CARDS -->
+<div class="row g-4 mb-5">
+    <div class="col-md-3">
+        <div class="card p-4" style="border-left:3px solid var(--accent);">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p style="color:var(--text2);font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Utilisateurs</p>
+                    <h2 style="font-size:2.2rem;font-weight:900;margin-bottom:4px;">{{ stats.total_users }}</h2>
+                    <a href="{% url 'dashboard_users' %}" style="color:var(--accent);font-size:0.8rem;font-weight:600;text-decoration:none;">Gérer →</a>
+                </div>
+                <i class="fas fa-users fa-2x" style="color:var(--accent);opacity:0.2;"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-4" style="border-left:3px solid var(--success);">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p style="color:var(--text2);font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Logements</p>
+                    <h2 style="font-size:2.2rem;font-weight:900;margin-bottom:4px;">{{ stats.total_logements }}</h2>
+                    <span style="color:var(--success);font-size:0.8rem;">{{ stats.logements_disponibles }} disponibles</span>
+                </div>
+                <i class="fas fa-home fa-2x" style="color:var(--success);opacity:0.2;"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-4" style="border-left:3px solid var(--warning);">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p style="color:var(--text2);font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Réservations</p>
+                    <h2 style="font-size:2.2rem;font-weight:900;margin-bottom:4px;">{{ stats.total_reservations }}</h2>
+                    <span style="color:var(--warning);font-size:0.8rem;">{{ stats.reservations_en_attente }} en attente</span>
+                </div>
+                <i class="fas fa-calendar fa-2x" style="color:var(--warning);opacity:0.2;"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-4" style="border-left:3px solid var(--accent2);">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p style="color:var(--text2);font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Revenus</p>
+                    <h2 style="font-size:1.6rem;font-weight:900;margin-bottom:4px;">{{ stats.revenus }} DH</h2>
+                    <span style="color:var(--accent2);font-size:0.8rem;">{{ stats.total_paiements }} paiements</span>
+                </div>
+                <i class="fas fa-dollar-sign fa-2x" style="color:var(--accent2);opacity:0.2;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- GRAPHIQUES -->
+<div class="row g-4 mb-5">
+    <div class="col-lg-8">
+        <div class="card p-4">
+            <h5 style="font-weight:700;margin-bottom:24px;">
+                <i class="fas fa-chart-line me-2" style="color:var(--accent)"></i>
+                Réservations des 6 derniers mois
+            </h5>
+            <canvas id="reservationsChart" height="100"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card p-4">
+            <h5 style="font-weight:700;margin-bottom:24px;">
+                <i class="fas fa-chart-pie me-2" style="color:var(--accent2)"></i>
+                Statuts réservations
+            </h5>
+            <canvas id="statusChart" height="200"></canvas>
+            <div class="mt-3">
+                <div class="d-flex justify-content-between mb-2" style="font-size:0.85rem;">
+                    <span><i class="fas fa-circle me-1" style="color:var(--success)"></i>Confirmées</span>
+                    <strong>{{ stats.reservations_confirmees }}</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2" style="font-size:0.85rem;">
+                    <span><i class="fas fa-circle me-1" style="color:var(--warning)"></i>En attente</span>
+                    <strong>{{ stats.reservations_en_attente }}</strong>
+                </div>
+                <div class="d-flex justify-content-between" style="font-size:0.85rem;">
+                    <span><i class="fas fa-circle me-1" style="color:var(--danger)"></i>Annulées</span>
+                    <strong>{{ stats.reservations_annulees }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- QUICK LINKS -->
+<div class="row g-3 mb-5">
+    <div class="col-6 col-md-3">
+        <a href="{% url 'dashboard_users' %}" class="card p-3 text-center text-decoration-none d-block">
+            <i class="fas fa-users fa-2x mb-2" style="color:var(--accent)"></i>
+            <div style="font-weight:600;font-size:0.88rem;">Utilisateurs</div>
+        </a>
+    </div>
+    <div class="col-6 col-md-3">
+        <a href="{% url 'dashboard_logements' %}" class="card p-3 text-center text-decoration-none d-block">
+            <i class="fas fa-home fa-2x mb-2" style="color:var(--success)"></i>
+            <div style="font-weight:600;font-size:0.88rem;">Logements</div>
+        </a>
+    </div>
+    <div class="col-6 col-md-3">
+        <a href="{% url 'dashboard_reservations' %}" class="card p-3 text-center text-decoration-none d-block">
+            <i class="fas fa-calendar fa-2x mb-2" style="color:var(--warning)"></i>
+            <div style="font-weight:600;font-size:0.88rem;">Réservations</div>
+        </a>
+    </div>
+    <div class="col-6 col-md-3">
+        <a href="{% url 'dashboard_temoignages' %}" class="card p-3 text-center text-decoration-none d-block" style="position:relative;">
+            <i class="fas fa-star fa-2x mb-2" style="color:var(--accent2)"></i>
+            <div style="font-weight:600;font-size:0.88rem;">Avis clients</div>
+            {% if stats.temoignages_en_attente > 0 %}
+            <span style="position:absolute;top:10px;right:10px;background:var(--danger);color:white;border-radius:20px;padding:2px 8px;font-size:0.72rem;font-weight:700;">{{ stats.temoignages_en_attente }}</span>
+            {% endif %}
+        </a>
+    </div>
+</div>
+
+<!-- TABLES -->
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 style="font-weight:700;">Utilisateurs Récents</h5>
+                <a href="{% url 'dashboard_users' %}" style="color:var(--accent);font-size:0.85rem;font-weight:600;text-decoration:none;">Voir tout</a>
+            </div>
+            <table class="table table-hover mb-0">
+                <thead><tr><th>NOM</th><th>RÔLE</th><th>INSCRIT</th></tr></thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td style="font-weight:600;">{{ u.get_full_name|default:u.username }}</td>
+                        <td><span class="badge bg-primary-soft">{{ u.get_role_display }}</span></td>
+                        <td style="color:var(--text2);font-size:0.85rem;">{{ u.date_joined|timesince }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 style="font-weight:700;">Réservations Récentes</h5>
+                <a href="{% url 'dashboard_reservations' %}" style="color:var(--accent);font-size:0.85rem;font-weight:600;text-decoration:none;">Voir tout</a>
+            </div>
+            <table class="table table-hover mb-0">
+                <thead><tr><th>PROPRIÉTÉ</th><th>CLIENT</th><th>STATUT</th></tr></thead>
+                <tbody>
+                    {% for r in reservations %}
+                    <tr>
+                        <td style="font-weight:600;">{{ r.logement.titre|truncatechars:18 }}</td>
+                        <td style="color:var(--text2);">{{ r.locataire.username }}</td>
+                        <td>
+                            {% if r.statut == 'confirmee' %}
+                            <span class="badge bg-success-soft">Confirmé</span>
+                            {% elif r.statut == 'en_attente' %}
+                            <span class="badge bg-warning-soft">En attente</span>
+                            {% elif r.statut == 'annulee' %}
+                            <span class="badge bg-danger-soft">Annulé</span>
+                            {% else %}
+                            <span class="badge bg-secondary-soft">{{ r.get_statut_display }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx1 = document.getElementById('reservationsChart').getContext('2d');
+new Chart(ctx1, {
+    type: 'line',
+    data: {
+        labels: {{ mois_labels|safe }},
+        datasets: [{
+            label: 'Réservations',
+            data: {{ mois_data|safe }},
+            borderColor: '#7c6ff7',
+            backgroundColor: 'rgba(124,111,247,0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#7c6ff7',
+            pointRadius: 5,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8888aa' } },
+            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8888aa', stepSize: 1 } }
+        }
+    }
+});
+
+const ctx2 = document.getElementById('statusChart').getContext('2d');
+new Chart(ctx2, {
+    type: 'doughnut',
+    data: {
+        labels: ['Confirmées', 'En attente', 'Annulées'],
+        datasets: [{
+            data: [{{ stats.reservations_confirmees }}, {{ stats.reservations_en_attente }}, {{ stats.reservations_annulees }}],
+            backgroundColor: ['rgba(16,185,129,0.8)', 'rgba(245,158,11,0.8)', 'rgba(239,68,68,0.8)'],
+            borderColor: ['#10b981', '#f59e0b', '#ef4444'],
+            borderWidth: 2,
+        }]
+    },
+    options: {
+        responsive: true,
+        cutout: '70%',
+        plugins: { legend: { display: false } }
+    }
+});
+</script>
+{% endblock %}

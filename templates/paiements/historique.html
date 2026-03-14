@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Historique paiements{% endblock %}
+{% block content %}
+<h3 class="mb-4"><i class="fas fa-history text-primary"></i> Historique des paiements</h3>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-primary">
+            <tr>
+                <th>Référence</th>
+                <th>Logement</th>
+                <th>Dates</th>
+                <th>Montant</th>
+                <th>Méthode</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in paiements %}
+            <tr>
+                <td><span class="badge bg-secondary">{{ p.reference }}</span></td>
+                <td>{{ p.reservation.logement.titre }}</td>
+                <td>{{ p.reservation.date_arrivee }} → {{ p.reservation.date_depart }}</td>
+                <td class="text-success fw-bold">{{ p.montant }} MAD</td>
+                <td>{{ p.get_methode_display }}</td>
+                <td>
+                    <span class="badge {% if p.statut == 'paye' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                        {{ p.get_statut_display }}
+                    </span>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="text-center text-muted">Aucun paiement</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

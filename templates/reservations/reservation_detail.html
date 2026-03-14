@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% block title %}Détail Réservation{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+
+        <!-- Header statut -->
+        <div class="card p-4 mb-4" style="
+            {% if reservation.statut == 'confirmee' %}
+            background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(16,185,129,0.03));border-color:rgba(16,185,129,0.3);
+            {% elif reservation.statut == 'en_attente' %}
+            background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(245,158,11,0.03));border-color:rgba(245,158,11,0.3);
+            {% else %}
+            background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(239,68,68,0.03));border-color:rgba(239,68,68,0.3);
+            {% endif %}">
+            <div class="d-flex align-items-center gap-3">
+                <div style="width:48px;height:48px;border-radius:14px;
+                    {% if reservation.statut == 'confirmee' %}background:rgba(16,185,129,0.2);
+                    {% elif reservation.statut == 'en_attente' %}background:rgba(245,158,11,0.2);
+                    {% else %}background:rgba(239,68,68,0.2);{% endif %}
+                    display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    {% if reservation.statut == 'confirmee' %}
+                    <i class="fas fa-check-circle" style="color:var(--success);font-size:1.2rem;"></i>
+                    {% elif reservation.statut == 'en_attente' %}
+                    <i class="fas fa-clock" style="color:var(--warning);font-size:1.2rem;"></i>
+                    {% else %}
+                    <i class="fas fa-times-circle" style="color:var(--danger);font-size:1.2rem;"></i>
+                    {% endif %}
+                </div>
+                <div>
+                    <div style="font-weight:700;font-size:1rem;">
+                        {% if reservation.statut == 'confirmee' %}Réservation confirmée
+                        {% elif reservation.statut == 'en_attente' %}En attente de confirmation
+                        {% else %}Réservation annulée{% endif %}
+                    </div>
+                    <div style="color:var(--text2);font-size:0.82rem;">Réservée le {{ reservation.date_reservation|date:"d M Y" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-4">
+
+            <!-- Logement -->
+            <div style="background:var(--bg2);border-radius:14px;padding:18px;margin-bottom:24px;">
+                <div class="d-flex gap-3 align-items-center">
+                    {% if reservation.logement.image %}
+                    <img src="{{ reservation.logement.image.url }}" style="width:70px;height:70px;border-radius:12px;object-fit:cover;flex-shrink:0;">
+                    {% else %}
+                    <div style="width:70px;height:70px;border-radius:12px;background:var(--card2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fas fa-home fa-lg" style="color:var(--text2)"></i>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <div style="font-weight:700;font-size:1rem;margin-bottom:4px;">{{ reservation.logement.titre }}</div>
+                        <div style="color:var(--text2);font-size:0.85rem;">
+                            <i class="fas fa-map-marker-alt me-1" style="color:var(--accent)"></i>{{ reservation.logement.adresse }}, {{ reservation.logement.ville }}
+                        </div>
+                        <div style="color:var(--text2);font-size:0.82rem;margin-top:4px;">
+                            <i class="fas fa-home me-1" style="color:var(--accent2)"></i>{{ reservation.logement.get_type_logement_display }}
+                            &nbsp;·&nbsp;
+                            <i class="fas fa-users me-1" style="color:var(--accent2)"></i>{{ reservation.logement.capacite }} personnes max
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dates -->
+            <div class="row g-3 mb-4">
+                <div class="col-4">
+                    <div style="background:var(--bg2);border-radius:12px;padding:14px;text-align:center;">
+                        <div style="color:var(--text2);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Arrivée</div>
+                        <div style="font-weight:700;font-size:0.95rem;">{{ reservation.date_arrivee }}</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div style="background:var(--bg2);border-radius:12px;padding:14px;text-align:center;">
+                        <div style="color:var(--text2);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Départ</div>
+                        <div style="font-weight:700;font-size:0.95rem;">{{ reservation.date_depart }}</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div style="background:var(--bg2);border-radius:12px;padding:14px;text-align:center;">
+                        <div style="color:var(--text2);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Durée</div>
+                        <div style="font-weight:700;font-size:0.95rem;">{{ reservation.nombre_nuits }} nuit(s)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prix -->
+            <div style="background:var(--bg2);border-radius:14px;padding:18px;margin-bottom:24px;">
+                <div class="d-flex justify-content-between mb-2" style="font-size:0.88rem;">
+                    <span style="color:var(--text2);">{{ reservation.logement.prix_par_nuit }} DH × {{ reservation.nombre_nuits }} nuit(s)</span>
+                    <span>{{ reservation.prix_total }} DH</span>
+                </div>
+                <div class="d-flex justify-content-between" style="border-top:1px solid var(--border);padding-top:12px;margin-top:8px;">
+                    <span style="font-weight:700;">Total</span>
+                    <span style="font-weight:900;font-size:1.2rem;color:var(--accent);">{{ reservation.prix_total }} DH</span>
+                </div>
+            </div>
+
+            <!-- Propriétaire si confirmée -->
+            {% if reservation.statut == 'confirmee' %}
+            <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:14px;padding:18px;margin-bottom:24px;">
+                <div style="font-weight:700;font-size:0.82rem;color:var(--success);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:14px;">
+                    <i class="fas fa-user-tie me-2"></i>Contact du propriétaire
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-2" style="font-size:0.88rem;">
+                    <i class="fas fa-user" style="color:var(--text2);width:16px;"></i>
+                    <span>{{ reservation.logement.proprietaire.get_full_name|default:reservation.logement.proprietaire.username }}</span>
+                </div>
+                {% if reservation.logement.proprietaire.telephone %}
+                <div class="d-flex align-items-center gap-2 mb-2" style="font-size:0.88rem;">
+                    <i class="fab fa-whatsapp" style="color:var(--success);width:16px;"></i>
+                    <a href="https://wa.me/{{ reservation.logement.proprietaire.telephone }}"
+                        target="_blank" style="color:var(--success);font-weight:600;">
+                        {{ reservation.logement.proprietaire.telephone }}
+                    </a>
+                </div>
+                {% endif %}
+                <div class="d-flex align-items-center gap-2" style="font-size:0.88rem;">
+                    <i class="fas fa-map-marker-alt" style="color:var(--accent);width:16px;"></i>
+                    <span style="color:var(--text2);">{{ reservation.logement.adresse }}, {{ reservation.logement.ville }}</span>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="d-flex gap-3">
+    <a href="{% url 'mes_reservations' %}" class="btn btn-outline-secondary flex-fill" style="padding:12px;">
+        <i class="fas fa-arrow-left me-2"></i>Mes réservations
+    </a>
+    {% if reservation.statut == 'confirmee' %}
+        {% if reservation.paiement_set.exists %}
+        <a href="{% url 'telecharger_recu' reservation.paiement_set.first.pk %}"
+            class="btn btn-success flex-fill" style="padding:12px;">
+            <i class="fas fa-file-pdf me-2"></i>Télécharger le reçu
+        </a>
+        {% else %}
+        <a href="{% url 'paiement' reservation.pk %}" class="btn btn-primary flex-fill" style="padding:12px;">
+            <i class="fas fa-credit-card me-2"></i>Passer au paiement
+        </a>
+        {% endif %}
+    {% elif reservation.statut == 'en_attente' %}
+    <a href="{% url 'annuler_reservation' reservation.pk %}"
+        class="btn btn-danger flex-fill" style="padding:12px;"
+        onclick="return confirm('Annuler cette réservation ?')">
+        <i class="fas fa-times me-2"></i>Annuler
+    </a>
+    {% endif %}
+</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

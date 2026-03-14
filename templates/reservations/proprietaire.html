@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Réservations reçues{% endblock %}
+{% block content %}
+<h3 class="mb-4"><i class="fas fa-list text-primary"></i> Réservations reçues</h3>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-primary">
+            <tr>
+                <th>Logement</th>
+                <th>Locataire</th>
+                <th>Dates</th>
+                <th>Total</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in reservations %}
+            <tr>
+                <td>{{ r.logement.titre }}</td>
+                <td>{{ r.locataire.get_full_name|default:r.locataire.username }}</td>
+                <td>{{ r.date_arrivee }} → {{ r.date_depart }}</td>
+                <td class="text-primary fw-bold">{{ r.prix_total }} MAD</td>
+                <td>
+                    <span class="badge 
+                        {% if r.statut == 'confirmee' %}bg-success
+                        {% elif r.statut == 'en_attente' %}bg-warning text-dark
+                        {% elif r.statut == 'annulee' %}bg-danger
+                        {% else %}bg-secondary{% endif %}">
+                        {{ r.get_statut_display }}
+                    </span>
+                </td>
+                <td>
+                    {% if r.statut == 'en_attente' %}
+                    <a href="{% url 'confirmer_reservation' r.pk %}" class="btn btn-success btn-sm">
+                        <i class="fas fa-check"></i> Confirmer
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'reservation_detail' r.pk %}" class="btn btn-outline-primary btn-sm">Détails</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="text-center text-muted">Aucune réservation reçue</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

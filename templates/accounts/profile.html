@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% block title %}Mon Profil{% endblock %}
+{% block content %}
+
+<div class="row g-5 justify-content-center">
+    <div class="col-lg-9">
+
+        <!-- HEADER CARD -->
+        <div class="card p-5 mb-4" style="background:linear-gradient(135deg,rgba(124,111,247,0.1),rgba(34,211,238,0.05));border-color:rgba(124,111,247,0.2);">
+            <div class="d-flex align-items-center gap-4 flex-wrap">
+                <!-- Avatar -->
+                <div style="position:relative;">
+                    {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);">
+                    {% else %}
+                    <div style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;border:3px solid rgba(124,111,247,0.4);">
+                        {{ user.username|first|upper }}
+                    </div>
+                    {% endif %}
+                    <label for="quickAvatar" style="position:absolute;bottom:0;right:0;width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--bg);">
+                        <i class="fas fa-camera" style="font-size:0.65rem;color:white;"></i>
+                    </label>
+                </div>
+                <!-- Infos -->
+                <div>
+                    <h3 style="font-weight:800;font-size:1.5rem;margin-bottom:4px;">{{ user.get_full_name|default:user.username }}</h3>
+                    <p style="color:var(--text2);margin-bottom:10px;">{{ user.email }}</p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <span class="badge bg-primary-soft" style="font-size:0.82rem;padding:6px 14px;">
+                            <i class="fas fa-user me-1"></i>{{ user.get_role_display }}
+                        </span>
+                        <span class="badge bg-success-soft" style="font-size:0.82rem;padding:6px 14px;">
+                            <i class="fas fa-calendar me-1"></i>Membre depuis {{ user.date_joined|date:"M Y" }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- FORMULAIRE MODIFICATION -->
+            <div class="col-lg-8">
+                <div class="card p-4">
+                    <h5 style="font-weight:700;margin-bottom:24px;">
+                        <i class="fas fa-edit me-2" style="color:var(--accent)"></i>
+                        Modifier mon profil
+                    </h5>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- Photo cachée liée au bouton camera -->
+                        <input type="file" name="avatar" id="quickAvatar" accept="image/*" style="display:none;" onchange="previewAvatar(this)">
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">PRÉNOM</label>
+                                <input type="text" name="first_name"
+                                    value="{{ user.first_name }}"
+                                    class="form-control" placeholder="Votre prénom">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">NOM</label>
+                                <input type="text" name="last_name"
+                                    value="{{ user.last_name }}"
+                                    class="form-control" placeholder="Votre nom">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">EMAIL</label>
+                                <input type="email" name="email"
+                                    value="{{ user.email }}"
+                                    class="form-control" placeholder="Votre email">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">TÉLÉPHONE</label>
+                                <input type="text" name="telephone"
+                                    value="{{ user.telephone|default:'' }}"
+                                    class="form-control" placeholder="Ex: 0612345678">
+                            </div>
+                           <div class="col-md-6">
+    <label class="form-label">CIN</label>
+    <div style="position:relative;">
+        <i class="fas fa-id-card" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:0.85rem;"></i>
+        <input type="text" name="cin"
+            value="{{ form.cin.value|default:user.cin|default:'' }}"
+            class="form-control"
+            placeholder="Ex: AB123456"
+            style="padding-left:42px;{% if form.cin.errors %}border-color:var(--danger);{% endif %}">
+    </div>
+    {% if form.cin.errors %}
+    <div style="color:var(--danger);font-size:0.8rem;margin-top:4px;display:flex;align-items:center;gap:6px;">
+        <i class="fas fa-exclamation-circle"></i>{{ form.cin.errors.0 }}
+    </div>
+    {% endif %}
+</div>
+                            <div class="col-12">
+                                <label class="form-label">PHOTO DE PROFIL</label>
+                                <div style="background:var(--bg2);border:2px dashed var(--border2);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;"
+                                    onclick="document.getElementById('avatarInput').click()"
+                                    id="uploadZone">
+                                    <i class="fas fa-cloud-upload-alt d-block mb-2" style="font-size:1.5rem;color:var(--text2)"></i>
+                                    <span style="font-size:0.85rem;color:var(--text2);" id="avatarLabel">
+                                        {% if user.avatar %}Photo actuelle — cliquer pour changer{% else %}Cliquer pour choisir une photo{% endif %}
+                                    </span>
+                                    <input type="file" name="avatar" id="avatarInput" accept="image/*" style="display:none;"
+                                        onchange="previewAvatar(this)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="btn btn-primary flex-fill" style="padding:13px;">
+                                <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                            </button>
+                            <a href="{% url 'logements_list' %}" class="btn btn-outline-secondary" style="padding:13px;">
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- SIDEBAR -->
+            <div class="col-lg-4">
+                <!-- Infos compte -->
+                <div class="card p-4 mb-4">
+                    <h6 style="font-weight:700;margin-bottom:18px;color:var(--text2);text-transform:uppercase;font-size:0.78rem;letter-spacing:0.6px;">Informations compte</h6>
+                    <div class="d-flex flex-column gap-3">
+                        <div>
+                            <div style="color:var(--text2);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Nom d'utilisateur</div>
+                            <div style="font-weight:600;">{{ user.username }}</div>
+                        </div>
+                        <div>
+    <div style="color:var(--text2);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">CIN</div>
+    <div style="font-weight:600;">{{ user.cin|default:"Non renseigné" }}</div>
+</div>
+                        <div>
+                            <div style="color:var(--text2);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Rôle</div>
+                            <div style="font-weight:600;">{{ user.get_role_display }}</div>
+                        </div>
+                        <div>
+                            <div style="color:var(--text2);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Membre depuis</div>
+                            <div style="font-weight:600;">{{ user.date_joined|date:"d M Y" }}</div>
+                        </div>
+                        <div>
+                            <div style="color:var(--text2);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Dernière connexion</div>
+                            <div style="font-weight:600;">{{ user.last_login|date:"d M Y H:i"|default:"—" }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions rapides -->
+                <div class="card p-4">
+                    <h6 style="font-weight:700;margin-bottom:18px;color:var(--text2);text-transform:uppercase;font-size:0.78rem;letter-spacing:0.6px;">Actions rapides</h6>
+                    <div class="d-flex flex-column gap-2">
+                        {% if user.is_locataire %}
+                        <a href="{% url 'mes_reservations' %}" class="btn btn-outline-secondary w-100 text-start" style="padding:10px 14px;">
+                            <i class="fas fa-calendar me-2" style="color:var(--accent)"></i>Mes réservations
+                        </a>
+                        <a href="{% url 'historique_paiements' %}" class="btn btn-outline-secondary w-100 text-start" style="padding:10px 14px;">
+                            <i class="fas fa-credit-card me-2" style="color:var(--success)"></i>Mes paiements
+                        </a>
+                        <a href="{% url 'logements_search' %}" class="btn btn-outline-secondary w-100 text-start" style="padding:10px 14px;">
+                            <i class="fas fa-search me-2" style="color:var(--accent2)"></i>Rechercher
+                        </a>
+                        {% endif %}
+                        {% if user.is_proprietaire %}
+                        <a href="{% url 'mes_logements' %}" class="btn btn-outline-secondary w-100 text-start" style="padding:10px 14px;">
+                            <i class="fas fa-home me-2" style="color:var(--accent)"></i>Mes logements
+                        </a>
+                        <a href="{% url 'reservations_proprietaire' %}" class="btn btn-outline-secondary w-100 text-start" style="padding:10px 14px;">
+                            <i class="fas fa-list me-2" style="color:var(--warning)"></i>Réservations reçues
+                        </a>
+                        <a href="{% url 'logement_create' %}" class="btn btn-outline-secondary w-100 text-start" style="padding:10px 14px;">
+                            <i class="fas fa-plus me-2" style="color:var(--success)"></i>Ajouter logement
+                        </a>
+                        {% endif %}
+                        {% if user.role == 'admin' %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary w-100 text-start" style="padding:10px 14px;">
+                            <i class="fas fa-tachometer-alt me-2" style="color:var(--accent)"></i>Dashboard Admin
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'logout' %}" class="btn btn-danger w-100 mt-2" style="padding:10px 14px;">
+                            <i class="fas fa-sign-out-alt me-2"></i>Se déconnecter
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewAvatar(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Update avatar display
+            const avatarEl = document.querySelector('[style*="width:90px"]');
+            if (avatarEl) {
+                if (avatarEl.tagName === 'IMG') {
+                    avatarEl.src = e.target.result;
+                } else {
+                    avatarEl.style.backgroundImage = `url(${e.target.result})`;
+                }
+            }
+            document.getElementById('avatarLabel').textContent = file.name;
+            // Sync both file inputs
+            document.getElementById('avatarInput').files = input.files;
+            document.getElementById('quickAvatar').files = input.files;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+</script>
+{% endblock %}

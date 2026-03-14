@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Connexion — LocationMaroc{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center align-items-center" style="min-height:80vh;">
+    <div class="col-md-5 col-lg-4">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <div style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 24px var(--accent-glow)">
+                <i class="fas fa-building" style="color:white;font-size:1.3rem;"></i>
+            </div>
+            <p style="color:var(--text2);">Connectez-vous à votre compte</p>
+        </div>
+
+        <div class="card p-4">
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- USERNAME -->
+                <div class="mb-3">
+                    <label class="form-label">NOM D'UTILISATEUR</label>
+                    <div style="position:relative;">
+                        <i class="fas fa-user" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text2);"></i>
+                        <input type="text" name="username"
+                            value="{{ form.username.value|default:'' }}"
+                            class="form-control" placeholder="Votre nom d'utilisateur"
+                            style="padding-left:42px;">
+                    </div>
+                    {% for e in form.username.errors %}
+                    <div style="color:var(--danger);font-size:0.8rem;margin-top:4px;"><i class="fas fa-exclamation-circle me-1"></i>{{ e }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- PASSWORD -->
+                <div class="mb-4">
+                    <label class="form-label">MOT DE PASSE</label>
+                    <div style="position:relative;">
+                        <i class="fas fa-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text2);"></i>
+                        <input type="password" name="password" id="loginPwd"
+                            class="form-control" placeholder="••••••••"
+                            style="padding-left:42px;padding-right:44px;">
+                        <i class="fas fa-eye" id="toggleLoginPwd"
+                            style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text2);"></i>
+                    </div>
+                    {% for e in form.non_field_errors %}
+                    <div style="color:var(--danger);font-size:0.8rem;margin-top:4px;"><i class="fas fa-exclamation-circle me-1"></i>{{ e }}</div>
+                    {% endfor %}
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100" style="padding:14px;font-size:1rem;">
+                    <i class="fas fa-sign-in-alt me-2"></i>Se connecter
+                </button>
+            </form>
+        </div>
+
+        <p class="text-center mt-4" style="color:var(--text2);">
+            Pas encore de compte ?
+            <a href="{% url 'register' %}" style="color:var(--accent);font-weight:600;text-decoration:none;">S'inscrire</a>
+        </p>
+    </div>
+</div>
+
+<script>
+document.getElementById('toggleLoginPwd').addEventListener('click', function() {
+    const pwd = document.getElementById('loginPwd');
+    pwd.type = pwd.type === 'password' ? 'text' : 'password';
+    this.classList.toggle('fa-eye');
+    this.classList.toggle('fa-eye-slash');
+});
+</script>
+{% endblock %}

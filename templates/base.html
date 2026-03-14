@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LocationMaroc{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0d0d;
+            --bg2: #111118;
+            --bg3: #16161f;
+            --card: #13131a;
+            --card2: #1a1a24;
+            --accent: #7c6ff7;
+            --accent2: #22d3ee;
+            --accent-glow: rgba(124,111,247,0.25);
+            --text: #ffffff;
+            --text2: #8888aa;
+            --border: #ffffff12;
+            --border2: #ffffff1a;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+
+            h1, h2, h3, h4, h5, h6 { color: white !important; }
+            .card p, .card span, .card div { color: var(--text2); }
+            .card .fw-600, .card [style*="font-weight:600"], .card [style*="font-weight:700"], .card [style*="font-weight:800"] { color: white !important; }
+            .info-value { color: white !important; font-weight: 600; }
+            .card a div { color: white !important; }
+            [style*="font-weight:600"] { color: white !important; }
+            [style*="font-weight:700"] { color: white !important; }
+            [style*="font-weight:800"] { color: white !important; }
+            [style*="font-weight:900"] { color: white !important; }
+            .card .col-md-6 div:last-child { color: white !important; }
+            body, body * { color: white; }
+            .text-muted { color: var(--text2) !important; }
+            a { text-decoration: none; }
+            .table tbody tr { background: transparent !important; }
+            .table tbody td { background: transparent !important; }
+            .table-hover tbody tr:hover { background: rgba(124,111,247,0.06) !important; }
+            .form-control, .form-select { background: var(--bg2) !important; color: white !important; }
+            .card { background: var(--card) !important; }
+            .dropdown-menu { background: var(--card2) !important; }
+            .dropdown-item { color: var(--text2) !important; }
+            .dropdown-item:hover { color: white !important; }
+            .alert-success { color: var(--success) !important; }
+            .alert-danger { color: var(--danger) !important; }
+            .alert-warning { color: var(--warning) !important; }
+            .alert-info { color: var(--accent2) !important; }
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ═══ NAVBAR ═══ */
+        .navbar {
+            background: rgba(13,13,13,0.85) !important;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 9999;
+        }
+        .navbar-brand {
+            display: flex; align-items: center; gap: 10px;
+            font-weight: 800; font-size: 1.2rem;
+            text-decoration: none; color: white !important;
+        }
+        .brand-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; color: white;
+        }
+        .brand-text {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+        .nav-link {
+            color: var(--text2) !important; font-weight: 500; font-size: 0.92rem;
+            padding: 8px 16px !important; border-radius: 8px; transition: all 0.2s;
+        }
+        .nav-link:hover { color: white !important; background: var(--border2); }
+        .nav-link.active-nav { color: white !important; background: rgba(124,111,247,0.2); }
+        .nav-avatar {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.85rem;
+            color: white; cursor: pointer; border: 2px solid var(--border2);
+        }
+        .nav-user-btn {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--card2); border: 1px solid var(--border2);
+            border-radius: 40px; padding: 5px 14px 5px 5px;
+            cursor: pointer; text-decoration: none;
+            color: var(--text) !important; font-size: 0.9rem; font-weight: 500;
+            transition: all 0.2s;
+        }
+        .nav-user-btn:hover { border-color: rgba(124,111,247,0.5); background: var(--card); }
+        .dropdown-menu {
+            background: var(--card2); border: 1px solid var(--border2);
+            border-radius: 16px; padding: 10px; min-width: 230px;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.6); margin-top: 10px !important;
+        }
+        .dropdown-header-user {
+            padding: 10px 12px 14px; border-bottom: 1px solid var(--border); margin-bottom: 6px;
+        }
+        .dropdown-header-user .name { font-weight: 700; font-size: 0.95rem; }
+        .dropdown-header-user .email { font-size: 0.8rem; color: var(--text2); margin-top: 2px; }
+        .dropdown-item {
+            color: var(--text2); border-radius: 10px; padding: 10px 14px;
+            font-size: 0.88rem; font-weight: 500; transition: all 0.15s;
+            display: flex; align-items: center; gap: 12px; text-decoration: none;
+        }
+        .dropdown-item i { width: 18px; text-align: center; font-size: 0.95rem; }
+        .dropdown-item:hover { background: var(--border2); color: white; }
+        .dropdown-item.logout { color: var(--danger); }
+        .dropdown-item.logout:hover { background: rgba(239,68,68,0.1); color: var(--danger); }
+        .dropdown-divider { border-color: var(--border); margin: 6px 0; }
+        .btn-signin {
+            color: var(--text2) !important; font-weight: 500; font-size: 0.9rem;
+            padding: 8px 16px; border-radius: 10px; transition: all 0.2s; text-decoration: none;
+        }
+        .btn-signin:hover { color: white !important; background: var(--border2); }
+        .btn-signup {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white !important; font-weight: 600; font-size: 0.9rem;
+            padding: 9px 20px; border-radius: 10px; text-decoration: none;
+            transition: all 0.3s; border: none;
+        }
+        .btn-signup:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 8px 24px var(--accent-glow); color: white !important; }
+
+        /* ═══ BUTTONS ═══ */
+        .btn { font-family: 'Inter', sans-serif; font-weight: 600; border-radius: 12px; transition: all 0.25s; }
+        .btn-primary { background: linear-gradient(135deg, var(--accent), #9f7aea); border: none; color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px var(--accent-glow); color: white; background: linear-gradient(135deg, var(--accent), #9f7aea); }
+        .btn-secondary-dark { background: var(--card2); border: 1px solid var(--border2); color: white; font-weight: 600; }
+        .btn-secondary-dark:hover { background: var(--bg3); color: white; border-color: var(--border2); }
+        .btn-success { background: var(--success); border: none; }
+        .btn-success:hover { background: #059669; transform: translateY(-1px); }
+        .btn-danger { background: var(--danger); border: none; }
+        .btn-outline-primary { border: 1.5px solid var(--accent); color: var(--accent); background: transparent; }
+        .btn-outline-primary:hover { background: var(--accent); color: white; }
+        .btn-outline-secondary { border: 1.5px solid var(--border2); color: var(--text2); background: transparent; }
+        .btn-outline-secondary:hover { background: var(--border2); color: white; border-color: var(--border2); }
+        .btn-sm { padding: 6px 14px; font-size: 0.82rem; border-radius: 8px; }
+        .btn-lg { padding: 14px 32px; font-size: 1rem; border-radius: 14px; }
+
+        /* ═══ CARDS ═══ */
+        .card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 20px; overflow: hidden; transition: all 0.3s ease;
+        }
+        .card:hover { border-color: var(--border2); box-shadow: 0 12px 40px rgba(0,0,0,0.4); transform: translateY(-4px); }
+        .property-card { cursor: pointer; }
+        .property-card .card-img-wrap { position: relative; overflow: hidden; height: 220px; }
+        .property-card .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+        .property-card:hover .card-img-wrap img { transform: scale(1.05); }
+        .property-card .card-img-wrap .no-img {
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--bg3), var(--card2));
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text2); font-size: 2.5rem;
+        }
+        .badge-type {
+            position: absolute; top: 14px; left: 14px;
+            background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
+            color: white; font-size: 0.72rem; font-weight: 700;
+            padding: 5px 12px; border-radius: 8px; letter-spacing: 0.5px; text-transform: uppercase;
+        }
+        .badge-status {
+            position: absolute; top: 14px; right: 14px;
+            font-size: 0.72rem; font-weight: 700; padding: 5px 12px; border-radius: 8px;
+        }
+        .badge-dispo { background: rgba(16,185,129,0.2); color: var(--success); border: 1px solid rgba(16,185,129,0.4); }
+        .badge-indispo { background: rgba(239,68,68,0.2); color: var(--danger); border: 1px solid rgba(239,68,68,0.4); }
+        .card-body { padding: 20px 22px; }
+        .property-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; }
+        .property-location { color: var(--text2); font-size: 0.87rem; margin-bottom: 10px; }
+        .property-location i { color: var(--accent); margin-right: 4px; }
+        .property-desc { color: var(--text2); font-size: 0.87rem; line-height: 1.5; margin-bottom: 16px; }
+        .property-price-label { color: var(--text2); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .property-price { font-size: 1.25rem; font-weight: 800; color: var(--accent); }
+        .property-price span { font-size: 0.82rem; color: var(--text2); font-weight: 400; }
+        .btn-details {
+            background: var(--card2); border: 1px solid var(--border2);
+            color: white; font-size: 0.85rem; font-weight: 600;
+            padding: 8px 18px; border-radius: 10px; text-decoration: none;
+            transition: all 0.2s; white-space: nowrap;
+        }
+        .btn-details:hover { background: var(--accent); border-color: var(--accent); color: white; }
+
+        /* ═══ FORMS ═══ */
+        .form-control, .form-select {
+            background: var(--bg2); border: 1px solid var(--border2);
+            color: white; border-radius: 12px; padding: 12px 16px;
+            font-size: 0.93rem; font-family: 'Inter', sans-serif; transition: all 0.2s;
+        }
+        .form-control:focus, .form-select:focus {
+            background: var(--bg2); border-color: var(--accent);
+            color: white; box-shadow: 0 0 0 4px rgba(124,111,247,0.15);
+        }
+        .form-control::placeholder { color: var(--text2); }
+        .form-label {
+            color: var(--text2); font-size: 0.78rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px;
+        }
+        select option { background: var(--bg3); }
+
+        /* ═══ TABLES ═══ */
+        .table { color: var(--text); border-color: var(--border); }
+        .table thead th {
+            color: var(--text2); font-size: 0.78rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.8px;
+            padding: 14px 18px; background: var(--bg2); border-bottom: 1px solid var(--border);
+        }
+        .table tbody td { padding: 14px 18px; border-color: var(--border); vertical-align: middle; font-size: 0.9rem; }
+        .table-hover tbody tr:hover { background: rgba(124,111,247,0.05); }
+        .table-responsive { border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+
+        /* ═══ ALERTS ═══ */
+        .alert { border: none; border-radius: 14px; font-size: 0.9rem; font-weight: 500; padding: 14px 18px; }
+        .alert-success { background: rgba(16,185,129,0.1); color: var(--success); border-left: 3px solid var(--success); }
+        .alert-danger, .alert-error { background: rgba(239,68,68,0.1); color: var(--danger); border-left: 3px solid var(--danger); }
+        .alert-warning { background: rgba(245,158,11,0.1); color: var(--warning); border-left: 3px solid var(--warning); }
+        .alert-info { background: rgba(34,211,238,0.1); color: var(--accent2); border-left: 3px solid var(--accent2); }
+        .btn-close { filter: invert(1) opacity(0.4); }
+
+        /* ═══ BADGES ═══ */
+        .badge { font-size: 0.75rem; font-weight: 700; padding: 5px 12px; border-radius: 8px; letter-spacing: 0.3px; }
+        .bg-success-soft { background: rgba(16,185,129,0.15); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+        .bg-danger-soft { background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+        .bg-warning-soft { background: rgba(245,158,11,0.15); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
+        .bg-primary-soft { background: rgba(124,111,247,0.15); color: var(--accent); border: 1px solid rgba(124,111,247,0.3); }
+        .bg-secondary-soft { background: rgba(255,255,255,0.07); color: var(--text2); border: 1px solid var(--border2); }
+        .bg-primary { background: var(--accent) !important; }
+        .bg-success { background: var(--success) !important; }
+        .bg-danger { background: var(--danger) !important; }
+        .bg-warning { background: var(--warning) !important; color: #000 !important; }
+
+        /* ═══ UTILITIES ═══ */
+        .text-accent { color: var(--accent) !important; }
+        .text-accent2 { color: var(--accent2) !important; }
+        .text-primary { color: var(--accent) !important; }
+        .text-success { color: var(--success) !important; }
+        .text-danger { color: var(--danger) !important; }
+        .text-warning { color: var(--warning) !important; }
+        .text-muted { color: var(--text2) !important; }
+        hr { border-color: var(--border); opacity: 1; }
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 6px; }
+        .page-subtitle { color: var(--text2); font-size: 0.95rem; }
+
+        /* ═══ SCROLLBAR ═══ */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+        /* ═══ ANIMATIONS ═══ */
+        .fade-up { animation: fadeUp 0.4s ease forwards; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ═══ MODAL CONFIRM ═══ */
+        #confirmModal { display: none; }
+        #confirmModal.active { display: flex; }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.92) translateY(10px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* ═══ FOOTER ═══ */
+        .footer { background: var(--bg); border-top: 1px solid var(--border); margin-top: 80px; padding: 60px 0 0; }
+        .footer-brand { font-size: 1.2rem; font-weight: 800; margin-bottom: 14px; }
+        .footer-desc { color: var(--text2); font-size: 0.88rem; line-height: 1.7; max-width: 260px; }
+        .footer-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 20px; }
+        .footer-link { display: block; color: var(--text2); font-size: 0.88rem; text-decoration: none; margin-bottom: 12px; transition: color 0.2s; }
+        .footer-link:hover { color: white; }
+        .footer-newsletter { display: flex; gap: 10px; }
+        .footer-newsletter input {
+            background: var(--card2); border: 1px solid var(--border2);
+            color: white; border-radius: 10px; padding: 10px 16px;
+            font-size: 0.88rem; flex: 1; outline: none;
+        }
+        .footer-newsletter input:focus { border-color: var(--accent); }
+        .footer-newsletter input::placeholder { color: var(--text2); }
+        .footer-newsletter button {
+            background: var(--accent); border: none; color: white;
+            font-weight: 700; border-radius: 10px; padding: 10px 20px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .footer-newsletter button:hover { background: #6b5ce7; }
+        .footer-bottom {
+            border-top: 1px solid var(--border); padding: 20px 0;
+            margin-top: 50px; text-align: center;
+            color: var(--text2); font-size: 0.85rem;
+        }
+        .stats-bar {
+            background: var(--bg2);
+            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+            padding: 48px 0; margin-top: 40px;
+        }
+        .stat-item { text-align: center; }
+        .stat-number { font-size: 2.4rem; font-weight: 900; color: white; }
+        .stat-label { color: var(--text2); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- ═══ NAVBAR ═══ -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <div class="brand-icon"><i class="fas fa-building"></i></div>
+            <span class="brand-text">LocationMaroc</span>
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <i class="fas fa-bars" style="color:var(--text2)"></i>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav gap-1">
+                {% if user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'logements_list' %}">Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'logements_search' %}">Rechercher</a></li>
+                {% if user.is_proprietaire %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'mes_logements' %}">Mes logements</a></li>
+                {% endif %}
+                {% endif %}
+            </ul>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            {% if user.is_authenticated %}
+            <!-- Cloche notifications -->
+            <div style="position:relative;">
+                <button onclick="toggleNotifs()" style="width:38px;height:38px;border-radius:50%;background:var(--card2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;position:relative;"
+                    onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)'">
+                    <i class="fas fa-bell" style="color:var(--text2);font-size:0.9rem;"></i>
+                    {% if notif_count > 0 %}
+                    <span style="position:absolute;top:-3px;right:-3px;width:18px;height:18px;background:var(--danger);border-radius:50%;font-size:0.65rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);">{{ notif_count }}</span>
+                    {% endif %}
+                </button>
+                <div id="notifDropdown" style="display:none;position:absolute;right:0;top:50px;width:320px;background:var(--card2);border:1px solid var(--border2);border-radius:16px;padding:12px;box-shadow:0 24px 64px rgba(0,0,0,0.6);z-index:9999;">
+                    <div style="font-weight:700;font-size:0.9rem;padding:8px 12px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                        <span><i class="fas fa-bell me-2" style="color:var(--accent)"></i>Notifications</span>
+                        {% if notif_count > 0 %}
+                        <span style="color:var(--text2);font-size:0.78rem;">{{ notif_count }} non lue(s)</span>
+                        {% endif %}
+                    </div>
+                    <div style="max-height:350px;overflow-y:auto;">
+                        {% if notifs %}
+                        {% for notif in notifs %}
+                        <a href="{% url 'marquer_notif_lue' notif.pk %}" style="display:flex;align-items:flex-start;gap:10px;padding:12px;border-radius:10px;text-decoration:none;transition:all 0.2s;margin-top:4px;{% if not notif.lue %}background:rgba(124,111,247,0.08);border:1px solid rgba(124,111,247,0.15);{% endif %}">
+                            <div style="width:38px;height:38px;border-radius:10px;background:{{ notif.color }};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="{{ notif.icon }}" style="font-size:0.85rem;color:white;"></i>
+                            </div>
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-size:0.85rem;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ notif.titre }}</div>
+                                {% if notif.message %}
+                                <div style="font-size:0.78rem;color:var(--text2);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{{ notif.message|truncatewords:12 }}</div>
+                                {% endif %}
+                                <div style="font-size:0.72rem;color:var(--text2);margin-top:3px;">{{ notif.date|timesince }}</div>
+                            </div>
+                            {% if not notif.lue %}
+                            <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0;"></div>
+                            {% endif %}
+                        </a>
+                        {% endfor %}
+                        {% else %}
+                        <div style="text-align:center;padding:28px;color:var(--text2);font-size:0.88rem;">
+                            <i class="fas fa-bell-slash d-block mb-2" style="font-size:1.5rem;opacity:0.4;"></i>
+                            Aucune notification
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="dropdown">
+                <a class="nav-user-btn dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="nav-avatar" style="overflow:hidden;padding:0;">
+                        {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" style="width:100%;height:100%;object-fit:cover;">
+                        {% else %}
+                        {{ user.username|first|upper }}
+                        {% endif %}
+                    </div>
+                    <span style="font-size:0.9rem;font-weight:500;color:white">{{ user.get_full_name|default:user.username|truncatechars:14 }}</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <div class="dropdown-header-user">
+                        <div class="name">{{ user.get_full_name|default:user.username }}</div>
+                        <div class="email">{{ user.email }}</div>
+                    </div>
+                    {% if user.role == 'admin' %}
+                    <li><a class="dropdown-item" href="{% url 'dashboard' %}"><i class="fas fa-th-large" style="color:var(--accent)"></i>Tableau de bord</a></li>
+                    {% endif %}
+                    {% if user.is_proprietaire %}
+                    <li><a class="dropdown-item" href="{% url 'reservations_proprietaire' %}"><i class="fas fa-list" style="color:var(--text2)"></i>Réservations reçues</a></li>
+                    <li><a class="dropdown-item" href="{% url 'mes_avis_recus' %}"><i class="fas fa-star" style="color:var(--accent)"></i>Mes avis reçus</a></li>
+                    {% endif %}
+                    {% if user.is_locataire %}
+                    <li><a class="dropdown-item" href="{% url 'mes_reservations' %}"><i class="fas fa-calendar" style="color:var(--text2)"></i>Mes réservations</a></li>
+                    {% endif %}
+                    <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user" style="color:var(--text2)"></i>Mon Profil</a></li>
+                    <li><a class="dropdown-item" href="{% url 'historique_paiements' %}"><i class="fas fa-credit-card" style="color:var(--text2)"></i>Mes paiements</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item logout" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>Déconnexion</a></li>
+                </ul>
+            </div>
+            {% else %}
+            <a class="btn-signin" href="{% url 'login' %}">Se connecter</a>
+            <a class="btn-signup" href="{% url 'register' %}">S'inscrire</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<!-- ═══ MESSAGES ═══ -->
+<div class="container mt-4">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show d-flex align-items-center gap-2 fade-up">
+        {% if message.tags == 'success' %}<i class="fas fa-check-circle"></i>
+        {% elif message.tags == 'error' or message.tags == 'danger' %}<i class="fas fa-exclamation-circle"></i>
+        {% else %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+    <div class="fade-up">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-3">
+                <div class="footer-brand gradient-text">LocationMaroc</div>
+                <p class="footer-desc">Votre partenaire de confiance pour trouver le logement idéal au Maroc. Simple, rapide et sécurisé.</p>
+            </div>
+            <div class="col-lg-2">
+                <div class="footer-title">Navigation</div>
+                <a href="{% url 'logements_list' %}" class="footer-link">Accueil</a>
+                <a href="{% url 'logements_search' %}" class="footer-link">Rechercher</a>
+            </div>
+            <div class="col-lg-3">
+                <div class="footer-title">Légal</div>
+                <a href="#" class="footer-link">Mentions légales</a>
+                <a href="#" class="footer-link">Confidentialité</a>
+                <a href="#" class="footer-link">CGU</a>
+            </div>
+            <div class="col-lg-4">
+                <div class="footer-title">Newsletter</div>
+                <div class="footer-newsletter">
+                    <input type="email" placeholder="Votre email">
+                    <button>OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="container">© 2026 LocationMaroc. Tous droits réservés.</div>
+    </div>
+</footer>
+
+<!-- ═══ MODAL CONFIRMATION ═══ -->
+<div id="confirmModal"
+    style="position:fixed;inset:0;z-index:99999;align-items:center;justify-content:center;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);"
+    onclick="closeConfirm(event)">
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:24px;padding:36px;max-width:420px;width:90%;box-shadow:0 32px 80px rgba(0,0,0,0.6);animation:modalIn 0.22s ease;">
+        <div style="width:56px;height:56px;border-radius:16px;background:rgba(239,68,68,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+            <i class="fas fa-exclamation-triangle" style="color:var(--danger);font-size:1.3rem;"></i>
+        </div>
+        <h5 id="confirmTitle" style="font-weight:800;font-size:1.05rem;text-align:center;margin-bottom:10px;color:white;"></h5>
+        <p id="confirmText" style="color:var(--text2);font-size:0.88rem;text-align:center;margin-bottom:28px;line-height:1.6;"></p>
+        <div style="display:flex;gap:10px;">
+            <button onclick="closeConfirmModal()"
+                style="flex:1;padding:13px;background:var(--bg2);border:1px solid var(--border2);color:var(--text2);border-radius:12px;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:Inter,sans-serif;"
+                onmouseover="this.style.borderColor='var(--accent)';this.style.color='white'"
+                onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text2)'">
+                Annuler
+            </button>
+            <button id="confirmBtn"
+                style="flex:1;padding:13px;background:var(--danger);border:none;color:white;border-radius:12px;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:Inter,sans-serif;"
+                onmouseover="this.style.opacity='0.85'"
+                onmouseout="this.style.opacity='1'">
+                Confirmer
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+
+<script>
+// ═══ NOTIFICATIONS ═══
+function toggleNotifs() {
+    const d = document.getElementById('notifDropdown');
+    d.style.display = d.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('notifDropdown');
+    if (dropdown && !dropdown.contains(e.target) && !e.target.closest('[onclick="toggleNotifs()"]')) {
+        dropdown.style.display = 'none';
+    }
+});
+
+// ═══ MODAL CONFIRMATION ═══
+let confirmCallback = null;
+
+function showConfirm(title, text, callback, btnText='Confirmer', btnColor='var(--danger)') {
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmText').textContent = text;
+    const btn = document.getElementById('confirmBtn');
+    btn.textContent = btnText;
+    btn.style.background = btnColor;
+    document.getElementById('confirmModal').classList.add('active');
+    confirmCallback = callback;
+    btn.onclick = () => { closeConfirmModal(); if (confirmCallback) confirmCallback(); };
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirmModal').classList.remove('active');
+    confirmCallback = null;
+}
+
+function closeConfirm(e) {
+    if (e.target === document.getElementById('confirmModal')) closeConfirmModal();
+}
+</script>
+</body>
+</html>
